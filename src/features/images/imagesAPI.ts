@@ -2,13 +2,14 @@ import { createApi } from 'unsplash-js';
 import { Image, Orientation, SearchImages } from './types';
 
 const ACCESS_KEY = '0d54d7bf8f81c9ee80a75d9e1263fbb6b8267fad9d908e597b9f7c4f6bcdee23';
+const IMAGES_PER_PAGE = 20;
 
 const unsplash = createApi({
   accessKey: ACCESS_KEY,
 });
 
 export async function getInitialImages(): Promise<Image[]> {
-  const result = await unsplash.photos.list({});
+  const result = await unsplash.photos.list({perPage: IMAGES_PER_PAGE});
 
   return result.response?.results.map((photo) => ({
     id: photo.id,
@@ -32,7 +33,7 @@ export async function searchImages(
   const result = await unsplash.search.getPhotos({
     query,
     page: page || 1,
-    perPage: 10,
+    perPage: IMAGES_PER_PAGE,
     color,
     orientation,
     orderBy
