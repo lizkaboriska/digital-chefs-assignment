@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/digital-chefs-assignment/static/css/main.9071bff3.css",
-    "main.js": "/digital-chefs-assignment/static/js/main.8ab3bcd6.js",
+    "main.js": "/digital-chefs-assignment/static/js/main.cc11783c.js",
     "static/js/787.4565ea89.chunk.js": "/digital-chefs-assignment/static/js/787.4565ea89.chunk.js",
     "index.html": "/digital-chefs-assignment/index.html",
     "main.9071bff3.css.map": "/digital-chefs-assignment/static/css/main.9071bff3.css.map",
-    "main.8ab3bcd6.js.map": "/digital-chefs-assignment/static/js/main.8ab3bcd6.js.map",
+    "main.cc11783c.js.map": "/digital-chefs-assignment/static/js/main.cc11783c.js.map",
     "787.4565ea89.chunk.js.map": "/digital-chefs-assignment/static/js/787.4565ea89.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.9071bff3.css",
-    "static/js/main.8ab3bcd6.js"
+    "static/js/main.cc11783c.js"
   ]
 }
