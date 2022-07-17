@@ -50,17 +50,26 @@ export function Images() {
     dispatch(initialLoad());
   }
 
+  const handleChangeQuery = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    if (!val) {
+      handleClearSearch();
+      return;
+    }
+
+    setSearchParams({...searchParams, query: e.target.value});
+  }
+
   return (
     <>
-      <Container maxWidth="md">
+      <Container sx={{p: 2}} maxWidth="md">
       <div>
         <TextField
           id="search-bar"
           className="text"
+          label="Search"
           value={searchParams.query || ''}
-          onChange={(e) => {
-            setSearchParams({...searchParams, query: e.target.value});
-          }}
+          onChange={handleChangeQuery}
           variant="outlined"
           placeholder="Search..."
           size="small"
@@ -73,6 +82,7 @@ export function Images() {
             value={searchParams.color || ''}
             label="Color"
             size="small"
+            disabled={!searchParams.query}
             onChange={(e) => {
               setSearchParams({...searchParams, color: (e.target.value as Color) || undefined});
             }}
@@ -99,6 +109,7 @@ export function Images() {
             value={searchParams.orderBy || ''}
             label="Order"
             size="small"
+            disabled={!searchParams.query}
             onChange={(e) => {
               console.log('order changed to: ', e.target.value)
               setSearchParams({...searchParams, orderBy: (e.target.value as OrderBy) || undefined});
@@ -117,6 +128,7 @@ export function Images() {
             value={searchParams.orientation || ''}
             label="Orientation"
             size="small"
+            disabled={!searchParams.query}
             onChange={(e) => {
               setSearchParams({...searchParams, orientation: (e.target.value as Orientation) || undefined});
             }}
