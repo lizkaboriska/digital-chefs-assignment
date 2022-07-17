@@ -1,44 +1,32 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState, AppThunk } from '../../app/store';
-import { getInitialImages, searchImages } from './imagesAPI';
-import { Image, SearchImages } from './types';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { RootState } from '../../app/store';
+import { listImages, searchImages } from './imagesAPI';
+import { Image, ListImages, SearchImages } from './types';
 
 export interface CounterState {
   images: Image[];
+  totalPages: number;
+  isLoading: boolean;
 }
 
 const initialState: CounterState = {
-  images: []
+  images: [],
+  totalPages: 0,
+  isLoading: false
 };
-
-// The function below is called a thunk and allows us to perform async logic. It
-// can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
-// will call the thunk with the `dispatch` function as the first argument. Async
-// code can then be executed and other actions can be dispatched. Thunks are
-// typically used to make async requests.
-// export const incrementAsync = createAsyncThunk(
-//   'counter/fetchCount',
-//   async (amount: number) => {
-//     const response = await fetchCount(amount);
-//     // The value we return becomes the `fulfilled` action payload
-//     return response.data;
-//   }
-// );
 
 export const search = createAsyncThunk(
   'images/search',
   async (args: SearchImages) => {
     const response = await searchImages(args);
-    console.log(response);
     return response;
   }
 );
 
-export const initialLoad = createAsyncThunk(
-  'images/init',
-  async () => {
-    const response = await getInitialImages();
-    console.log(response);
+export const list = createAsyncThunk(
+  'images/list',
+  async (args?: ListImages) => {
+    const response = await listImages({page: args?.page});
     return response;
   }
 );
@@ -46,31 +34,31 @@ export const initialLoad = createAsyncThunk(
 export const imagesSlice = createSlice({
   name: 'images',
   initialState,
-  // The `reducers` field lets us define reducers and generate associated actions
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(initialLoad.fulfilled, (state, action) => {
-        state.images = action.payload;
+      .addCase(list.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(list.fulfilled, (state, action) => {
+        state.images = action.payload.images;
+        state.totalPages = action.payload.totalPages;
+        state.isLoading = false;
+      })
+      .addCase(search.pending, (state, action) => {
+        state.isLoading = true;
       })
       .addCase(search.fulfilled, (state, action) => {
-        state.images = action.payload;
+        state.images = action.payload.images;
+        state.totalPages = action.payload.totalPages;
+        state.isLoading = false;
       })
   },
 });
 
 
 export const selectImages = (state: RootState) => state.images.images;
-
-// We can also write thunks by hand, which may contain both sync and async logic.
-// Here's an example of conditionally dispatching actions based on current state.
-// export const incrementIfOdd =
-//   (amount: number): AppThunk =>
-//   (dispatch, getState) => {
-//     const currentValue = selectCount(getState());
-//     if (currentValue % 2 === 1) {
-//       dispatch(incrementByAmount(amount));
-//     }
-//   };
+export const selectTotalPages = (state: RootState) => state.images.totalPages;
+export const selectIsLoading = (state: RootState) => state.images.isLoading;
 
 export default imagesSlice.reducer;

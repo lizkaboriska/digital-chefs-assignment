@@ -1,52 +1,69 @@
 import { useEffect, useState } from 'react';
-import Container from '@mui/material/Container';
-import TextField from '@mui/material/TextField';
-import IconButton from "@mui/material/IconButton";
+import {
+  Container,
+  TextField,
+  IconButton,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  CircularProgress
+} from '@mui/material';
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from '@mui/icons-material/Clear';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-import { useAppDispatch } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
-  initialLoad,
-  search
+  list,
+  search,
+  selectImages,
+  selectIsLoading,
+  selectTotalPages
 } from './imagesSlice';
 import { Color, OrderBy, Orientation, SearchImages } from './types';
 import { ImagesList } from './components/ImagesList';
 
 const initialSearch: SearchImages = {
   query: '',
-  page: undefined,
   color: undefined,
   orientation: undefined,
   orderBy: undefined
 };
 
-export function Images() {
+export const Images: React.FunctionComponent = () => {
   const dispatch = useAppDispatch();
+
+  const totalPages = useAppSelector(selectTotalPages);
+  const images = useAppSelector(selectImages);
+  const isLoading = useAppSelector(selectIsLoading);
+
   const [searchParams, setSearchParams] = useState<SearchImages>(initialSearch);
+  const [currSearchParams, setCurrSearchParams] = useState<SearchImages>(initialSearch);
+  const [currPage, setCurrPage] = useState(1);
 
   useEffect(() => {
-    dispatch(initialLoad());
+    dispatch(list());
   }, [])
 
-  const handleSearch = () => {
+  const handleSearch = (): void => {
     if (searchParams.query) {
+      setCurrSearchParams(searchParams);
+      setCurrPage(1);
       dispatch(search(searchParams));
     } else {
-      dispatch(initialLoad());
+      dispatch(list());
     }
   }
 
-  const handleClearSearch = () => {
+  const handleClearSearch = (): void => {
     setSearchParams(initialSearch);
-    dispatch(initialLoad());
+    setCurrPage(1);
+    dispatch(list());
   }
 
-  const handleChangeQuery = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeQuery = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const val = e.target.value;
     if (!val) {
       handleClearSearch();
@@ -54,6 +71,59 @@ export function Images() {
     }
 
     setSearchParams({...searchParams, query: e.target.value});
+  }
+
+  const handleNextPageClick = (): void => {
+    const page = currPage + 1;
+    loadNewPage(page);
+  }
+
+  const handlePrevPageClick = (): void => {
+    if (currPage <= 1) return;
+    const page = currPage - 1;
+    loadNewPage(page)
+  }
+
+  const loadNewPage = (page: number): void => {
+    setCurrPage(page);
+
+    if (currSearchParams.query) {
+      dispatch(search({...currSearchParams, page}));
+      return;
+    }
+    dispatch(list({page}));
+  }
+
+  const renderPagination = (): React.ReactNode => {
+    return (
+      <>
+        <IconButton
+          disabled={currPage <= 1}
+          onClick={handlePrevPageClick}
+        >
+          <ArrowBackIosIcon/>
+        </IconButton>
+        <IconButton
+          disabled={currPage >= totalPages}
+          onClick={handleNextPageClick}
+        >
+          <ArrowForwardIosIcon/>
+        </IconButton>
+      </>
+    );
+  }
+
+  const renderContent = (): React.ReactNode => {
+    return (
+      <>
+        <ImagesList />
+        {Boolean(images.length) && renderPagination()}
+      </>
+    )
+  }
+
+  const renderLoader = (): React.ReactNode => {
+    return <CircularProgress sx={{p: 10}} />;
   }
 
   return (
@@ -69,9 +139,10 @@ export function Images() {
             variant="outlined"
             placeholder="Search..."
             size="small"
+            sx={{m: 1}}
           />
 
-          <FormControl sx={{minWidth: 120 }}>
+          <FormControl sx={{minWidth: 120, m: 1}}>
             <InputLabel id="color-label" size='small'>Color</InputLabel>
             <Select
               labelId='color-label'
@@ -98,7 +169,7 @@ export function Images() {
             </Select>
           </FormControl>
 
-          <FormControl sx={{minWidth: 120 }}>
+          <FormControl sx={{minWidth: 120, m: 1}}>
             <InputLabel id="order-label" size='small'>Order</InputLabel>
             <Select
               labelId='order-label'
@@ -117,7 +188,7 @@ export function Images() {
             </Select>
           </FormControl>
 
-          <FormControl sx={{minWidth: 120 }}>
+          <FormControl sx={{minWidth: 120, m: 1}}>
             <InputLabel id="orientation-label" size='small'>Orientation</InputLabel>
             <Select
               labelId='orientation-label'
@@ -135,19 +206,20 @@ export function Images() {
               <MenuItem value={0}>-</MenuItem>
             </Select>
           </FormControl>
-
           <IconButton
+            sx={{m: 1}}
             onClick={handleSearch}
           >
             <SearchIcon/>
           </IconButton>
           <IconButton
+            sx={{m: 1}}
             onClick={handleClearSearch}
           >
             <ClearIcon/>
           </IconButton>
         </div>
-        <ImagesList />
+        {isLoading ? renderLoader() : renderContent()}
       </Container>
     </>
   );

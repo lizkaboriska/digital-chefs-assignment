@@ -6,6 +6,15 @@ export interface SearchImages {
   orderBy?: OrderBy
 }
 
+export interface ListImages {
+  page?: number
+}
+
+export interface ImagesRes {
+  images: Image[],
+  totalPages: number
+}
+
 export interface Image {
   id: string,
   alt: string,

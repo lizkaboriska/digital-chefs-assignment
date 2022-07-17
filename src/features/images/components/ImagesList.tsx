@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Modal, Link, Box, ImageListItem, ImageList } from '@mui/material';
+import { Modal, Link, Box, ImageListItem, ImageList, Typography } from '@mui/material';
 import { useAppSelector } from '../../../app/hooks';
 import {
   selectImages
@@ -24,14 +24,19 @@ const imageContainerStyle: React.CSSProperties = {
   justifyContent: 'center',
 };
 
-export function ImagesList() {
+export const ImagesList: React.FunctionComponent = () => {
   const images = useAppSelector(selectImages);
   const [selectedImage, setSelectedImage] = useState<Image | undefined>();
 
   const handleClose = () => setSelectedImage(undefined);
 
-  return (
-    <>
+  const renderEmptyMessage = (): React.ReactNode => {
+    return <Typography mt={2}> Sorry, nothing found :( </Typography>;
+  }
+
+  const renderList = (): React.ReactNode => {
+    return (
+      <>
         <ImageList variant="masonry" cols={7} gap={8}>
           {images.map((item) => (
             <ImageListItem
@@ -70,6 +75,13 @@ export function ImagesList() {
             <Link href={selectedImage?.urls.full} target="_blank"> Open in a new tab</Link>
           </Box>
         </Modal>
+      </>
+    );
+  }
+
+  return (
+    <>
+      {images.length ? renderList() : renderEmptyMessage()}
     </>
   );
 }
