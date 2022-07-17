@@ -135,11 +135,17 @@ export const Images: React.FunctionComponent = () => {
             className="text"
             label="Search"
             value={searchParams.query || ''}
-            onChange={handleChangeQuery}
             variant="outlined"
             placeholder="Search..."
             size="small"
             sx={{m: 1}}
+            onChange={handleChangeQuery}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                handleSearch();
+                e.preventDefault();
+              }
+            }}
           />
 
           <FormControl sx={{minWidth: 120, m: 1}}>
@@ -154,17 +160,17 @@ export const Images: React.FunctionComponent = () => {
                 setSearchParams({...searchParams, color: (e.target.value as Color) || undefined});
               }}
             >
-              <MenuItem value={Color.BLACK_AND_WHITE}>BLACK_AND_WHITE</MenuItem>
-              <MenuItem value={Color.BLACK}>BLACK</MenuItem>
-              <MenuItem value={Color.WHITE}>WHITE</MenuItem>
-              <MenuItem value={Color.YELLOW}>YELLOW</MenuItem>
-              <MenuItem value={Color.ORANGE}>ORANGE</MenuItem>
-              <MenuItem value={Color.RED}>RED</MenuItem>
-              <MenuItem value={Color.PURPLE}>PURPLE</MenuItem>
-              <MenuItem value={Color.MAGENTA}>MAGENTA</MenuItem>
-              <MenuItem value={Color.GREEN}>GREEN</MenuItem>
-              <MenuItem value={Color.TEAL}>TEAL</MenuItem>
-              <MenuItem value={Color.BLUE}>BLUE</MenuItem>
+              <MenuItem value={Color.BLACK_AND_WHITE}>Black and white</MenuItem>
+              <MenuItem value={Color.BLACK}>Black</MenuItem>
+              <MenuItem value={Color.WHITE}>White</MenuItem>
+              <MenuItem value={Color.YELLOW}>Yellow</MenuItem>
+              <MenuItem value={Color.ORANGE}>Orange</MenuItem>
+              <MenuItem value={Color.RED}>Red</MenuItem>
+              <MenuItem value={Color.PURPLE}>Purple</MenuItem>
+              <MenuItem value={Color.MAGENTA}>Magenta</MenuItem>
+              <MenuItem value={Color.GREEN}>Green</MenuItem>
+              <MenuItem value={Color.TEAL}>Teal</MenuItem>
+              <MenuItem value={Color.BLUE}>Blue</MenuItem>
               <MenuItem value={0}>-</MenuItem>
             </Select>
           </FormControl>
@@ -182,8 +188,8 @@ export const Images: React.FunctionComponent = () => {
                 setSearchParams({...searchParams, orderBy: (e.target.value as OrderBy) || undefined});
               }}
             >
-              <MenuItem value={OrderBy.LATEST}>LATEST</MenuItem>
-              <MenuItem value={OrderBy.RELEVANT}>RELEVANT</MenuItem>
+              <MenuItem value={OrderBy.LATEST}>Latest</MenuItem>
+              <MenuItem value={OrderBy.RELEVANT}>Relevant</MenuItem>
               <MenuItem value={0}>-</MenuItem>
             </Select>
           </FormControl>
@@ -200,9 +206,9 @@ export const Images: React.FunctionComponent = () => {
                 setSearchParams({...searchParams, orientation: (e.target.value as Orientation) || undefined});
               }}
             >
-              <MenuItem value={Orientation.LANDSCAPE}>LANDSCAPE</MenuItem>
-              <MenuItem value={Orientation.PORTRAIT}>PORTRAIT</MenuItem>
-              <MenuItem value={Orientation.SQUARE}>SQUARE</MenuItem>
+              <MenuItem value={Orientation.LANDSCAPE}>Landscape</MenuItem>
+              <MenuItem value={Orientation.PORTRAIT}>Portrait</MenuItem>
+              <MenuItem value={Orientation.SQUARE}>Square</MenuItem>
               <MenuItem value={0}>-</MenuItem>
             </Select>
           </FormControl>
